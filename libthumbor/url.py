@@ -124,6 +124,12 @@ def get_url_parts(**options):
     if options.get("smart", False):
         url_parts.append("smart")
 
+    if options.get("auth", False):
+        auth_string = ["auth"]
+        for auth_value in options["auth"]:
+            auth_string.append(auth_value)
+        url_parts.append(":".join(auth_string))
+
     if options.get("filters", False):
         filters_string = ["filters"]
         for filter_value in options["filters"]:
@@ -173,6 +179,7 @@ class Url:
     halign = r"(?:(?P<halign>left|right|center)/)?"
     valign = r"(?:(?P<valign>top|bottom|middle)/)?"
     smart = r"(?:(?P<smart>smart)/)?"
+    auth = r"(?:auth:(?P<auth>.+?\))/)?"
     filters = r"(?:filters:(?P<filters>.+?\))/)?"
     image = r"(?P<image>.+)"
 
@@ -193,6 +200,7 @@ class Url:
         reg.append(cls.halign)
         reg.append(cls.valign)
         reg.append(cls.smart)
+        reg.append(cls.auth)
         reg.append(cls.filters)
         reg.append(cls.image)
 
@@ -240,6 +248,7 @@ class Url:
             "halign": result["halign"] or "center",
             "valign": result["valign"] or "middle",
             "smart": result["smart"] == "smart",
+            "auth": result["auth"] or "",
             "filters": result["filters"] or "",
             "image": "image" in result and result["image"] or None,
         }
@@ -266,6 +275,7 @@ class Url:
         crop_top=None,
         crop_right=None,
         crop_bottom=None,
+        auth=None,
         filters=None,
     ):
         url = []
@@ -310,6 +320,9 @@ class Url:
 
         if smart:
             url.append("smart")
+
+        if auth:
+            url.append("auth:%s" % auth)
 
         if filters:
             url.append("filters:%s" % filters)
