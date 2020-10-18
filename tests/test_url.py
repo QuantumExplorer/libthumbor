@@ -31,7 +31,7 @@ class UrlTestCase(TestCase):
             "(?:(?P<adaptive>adaptive-)?(?P<full>full-)?(?P<fit_in>fit-in)/)?(?:(?P<horizontal_flip>-)?"
             "(?P<width>(?:\\d+|orig))?x(?P<vertical_flip>-)?(?P<height>(?:\\d+|orig))?/)?"
             "(?:(?P<halign>left|right|center)/)?(?:(?P<valign>top|bottom|middle)/)?"
-            "(?:(?P<smart>smart)/)?(?:filters:(?P<filters>.+?\\))/)?(?P<image>.+)"
+            "(?:(?P<smart>smart)/)?(?:auth:(?P<auth>.+?\\))/)?(?:filters:(?P<filters>.+?\\))/)?(?P<image>.+)"
         )
 
     def test_can_get_regex_without_unsafe(self):
@@ -44,7 +44,7 @@ class UrlTestCase(TestCase):
             "(?:(?P<adaptive>adaptive-)?(?P<full>full-)?(?P<fit_in>fit-in)/)?(?:(?P<horizontal_flip>-)?"
             "(?P<width>(?:\\d+|orig))?x(?P<vertical_flip>-)?(?P<height>(?:\\d+|orig))?/)?"
             "(?:(?P<halign>left|right|center)/)?(?:(?P<valign>top|bottom|middle)/)?"
-            "(?:(?P<smart>smart)/)?(?:filters:(?P<filters>.+?\\))/)?(?P<image>.+)"
+            "(?:(?P<smart>smart)/)?(?:auth:(?P<auth>.+?\\))/)?(?:filters:(?P<filters>.+?\\))/)?(?P<image>.+)"
         )
 
     def test_parsing_invalid_url(self):
@@ -56,7 +56,7 @@ class UrlTestCase(TestCase):
     def test_parsing_complete_url(self):
         url = (
             "/debug/meta/trim/300x200:400x500/adaptive-full-fit-in/-300x-400/"
-            "left/top/smart/filters:brightness(100)/some/image.jpg"
+            "left/top/smart/auth:requester(CVZzFCbz4Rcf2Lmu9mvtC1CmvPukHy5kS2LNtNaBFM2N):contract(Du2kswW2h1gNVnTWdfNdSxBrC2F9ofoaZsXA6ki1PhG6):document(profile):field(avatarURL):owner(8vagK6r9BnYct3k8WWYXNFadY1hG8TjikR3SfXceFnRQ):updatedAt(1602042152761)/filters:brightness(100)/some/image.jpg"
         )
 
         expected = {
@@ -71,6 +71,7 @@ class UrlTestCase(TestCase):
             "width": 300,
             "meta": True,
             "horizontal_flip": True,
+            "auth": "requester(CVZzFCbz4Rcf2Lmu9mvtC1CmvPukHy5kS2LNtNaBFM2N):contract(Du2kswW2h1gNVnTWdfNdSxBrC2F9ofoaZsXA6ki1PhG6):document(profile):field(avatarURL):owner(8vagK6r9BnYct3k8WWYXNFadY1hG8TjikR3SfXceFnRQ):updatedAt(1602042152761)",
             "filters": "brightness(100)",
             "valign": "top",
             "debug": True,
@@ -106,11 +107,12 @@ class UrlTestCase(TestCase):
             crop_top=100,
             crop_right=400,
             crop_bottom=400,
+            auth="requester(CVZzFCbz4Rcf2Lmu9mvtC1CmvPukHy5kS2LNtNaBFM2N):contract(Du2kswW2h1gNVnTWdfNdSxBrC2F9ofoaZsXA6ki1PhG6):document(profile):field(avatarURL):owner(8vagK6r9BnYct3k8WWYXNFadY1hG8TjikR3SfXceFnRQ):updatedAt(1602042152761)",
             filters="brightness(100)",
         )
 
         expect(url).to_equal(
-            "debug/meta/trim/100x100:400x400/adaptive-full-fit-in/-300x-200/left/top/smart/filters:brightness(100)"
+            "debug/meta/trim/100x100:400x400/adaptive-full-fit-in/-300x-200/left/top/smart/auth:requester(CVZzFCbz4Rcf2Lmu9mvtC1CmvPukHy5kS2LNtNaBFM2N):contract(Du2kswW2h1gNVnTWdfNdSxBrC2F9ofoaZsXA6ki1PhG6):document(profile):field(avatarURL):owner(8vagK6r9BnYct3k8WWYXNFadY1hG8TjikR3SfXceFnRQ):updatedAt(1602042152761)/filters:brightness(100)"
         )
 
     def test_can_generate_url_with_defaults(self):
@@ -142,9 +144,10 @@ class UrlTestCase(TestCase):
             crop_top=100,
             crop_right=400,
             crop_bottom=400,
+            auth="requester(CVZzFCbz4Rcf2Lmu9mvtC1CmvPukHy5kS2LNtNaBFM2N):contract(Du2kswW2h1gNVnTWdfNdSxBrC2F9ofoaZsXA6ki1PhG6):document(profile):field(avatarURL):owner(8vagK6r9BnYct3k8WWYXNFadY1hG8TjikR3SfXceFnRQ):updatedAt(1602042152761)",
             filters="brightness(100)",
         )
 
         expect(url).to_equal(
-            "debug/meta/trim:300x200/100x100:400x400/adaptive-full-fit-in/-300x-200/left/top/smart/filters:brightness(100)"
+            "debug/meta/trim:300x200/100x100:400x400/adaptive-full-fit-in/-300x-200/left/top/smart/auth:requester(CVZzFCbz4Rcf2Lmu9mvtC1CmvPukHy5kS2LNtNaBFM2N):contract(Du2kswW2h1gNVnTWdfNdSxBrC2F9ofoaZsXA6ki1PhG6):document(profile):field(avatarURL):owner(8vagK6r9BnYct3k8WWYXNFadY1hG8TjikR3SfXceFnRQ):updatedAt(1602042152761)/filters:brightness(100)"
         )
